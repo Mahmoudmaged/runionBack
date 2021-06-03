@@ -63,7 +63,7 @@ app.post('/addHomeless',
     addHomelessValidation,
     addHomelessController);
 
-//close homless with no report
+//close homless with no reportse
 app.get('/closeHomless/:id',
     auth.authentication,
     auth.authRole(["superAdmin", "policeStation"]),

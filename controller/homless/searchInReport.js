@@ -5,6 +5,7 @@ const fs = require('fs');
 const request = require('request');
 module.exports = async (req, res) => {
     const { imageURl } = req.body//file.path;
+    
     const { name, age, gender, foundlocation } = req.body;
     try {
         let matchedResult = [];

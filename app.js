@@ -8,9 +8,10 @@ const mongoose = require('mongoose');
 app.use(express.urlencoded({extends:false}));
 app.use(express.static(path.join(__dirname,'public')));
 
-app.use(express.json());
 // app.use(express.static(path.join("uploadImages")))
 app.use(express.urlencoded({extended:true}));
+app.use(express.json());
+
 app.use("/uploadImages", express.static(path.join("uploadImages")))
 
 app.use(cors());
@@ -39,11 +40,10 @@ function fileFilter (req, file, cb) {
     }
   
 }
-// req.file.path
 app.use(multer({dest:"files" ,fileFilter, storage }).single("img"));
 app.use(require("./routers/app.router"));
 
-mongoose.connect('mongodb://localhost:27017/ReunionGP', {useNewUrlParser: true, useUnifiedTopology: true}).then(()=>{
+mongoose.connect('mongodb+srv://MahmoudElwan:01015776658@mahmoudelwan-nodejs.jfspq.mongodb.net/ReunionGP', {useNewUrlParser: true, useUnifiedTopology: true}).then(()=>{
     console.log("mongoDB is Connected");
 });
 app.listen(port, () => console.log(`Example app listening on port port!`))
