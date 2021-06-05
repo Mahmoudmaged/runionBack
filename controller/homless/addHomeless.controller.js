@@ -2,7 +2,12 @@ const homelessModel = require("../../model/homeless.model");
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 module.exports = async  (req, res) => {
-    const {imageURl} =req.body//file.path;
+    let  imageURl ;
+    if(req.file == undefined){
+     res.json({message:"in-valid image"})
+    }else{
+        imageURl = req.file.path;
+    }
     const { name, age, gender, description, foundlocation, foundTime, shelterID, policeSationID,
         finderName, finderNationID, finderPhone, finderEmail } = req.body;
     try {

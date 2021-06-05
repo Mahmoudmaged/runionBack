@@ -17,7 +17,12 @@ async function addReport(req, res, data, myemail, meassage) {
 
 }
 module.exports = async (req, res) => {
-    const  imageURl = req.file.path;
+    let  imageURl ;
+    if(req.file == undefined){
+     res.json({message:"in-valid image"})
+    }else{
+        imageURl = req.file.path;
+    }
     const { name, age, description, gender, lostLocation, lostTime, reporterName,
         reporterNationID, reporterPhone, reporterEmail, status, policeStationID } = req.body;
     try {

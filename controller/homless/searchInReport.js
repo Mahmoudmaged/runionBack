@@ -4,8 +4,12 @@ const bcrypt = require('bcrypt')
 const fs = require('fs');
 const request = require('request');
 module.exports = async (req, res) => {
-    const { imageURl } = req.body//file.path;
-    
+    let  imageURl ;
+    if(req.file == undefined){
+     res.json({message:"in-valid image"})
+    }else{
+        imageURl = req.file.path;
+    }
     const { name, age, gender, foundlocation } = req.body;
     try {
         let matchedResult = [];

@@ -9,8 +9,12 @@ const { validationResult } = require("express-validator");
 module.exports = async (req, res) => {
     // const { shelterName } = req.body
     const id = req.params.id; // repoert id
-
-    const imageURl = req.file.path;
+    let  imageURl ;
+    if(req.file == undefined){
+     res.json({message:"in-valid image"})
+    }else{
+        imageURl = req.file.path;
+    }
     const { shelterName, name, age, gender, description, foundlocation, foundTime, policeSationID,
         finderName, finderNationID, finderPhone, finderEmail } = req.body;
     try {
