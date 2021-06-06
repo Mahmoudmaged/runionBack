@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
                         // send Confirm mail
                         
                         const token = jwt.sign({ email }, 'shhhhh');
-                        let message=` <a href="http://localhost:3000/confirmMessage/${token}"> confirm </a>`;
+                        let message=` <a href="https://runiongpsystem.herokuapp.com/confirmMessage/${token}"> confirm </a>`;
                         await sendEmail(req.body.email,message)
                         res.json({ message: 'user  registerd successfully' });
                     }

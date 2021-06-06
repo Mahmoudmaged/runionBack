@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
                             //email
                             let message = `
                                         <p>reportID: ${parent._id}</p>
-                                        <p> <a href='http://localhost:3000/seachHomelessByID/${data._id}'>view  u missing </a></p>
+                                        <p> <a href='https://runiongpsystem.herokuapp.com/seachHomelessByID/${data._id}'>view  u missing </a></p>
                                         <P>congratolatioin we have found u  missing please go to
                                         <a href='${shelter.location}'> open location in google maps</a> </P> `;
                             await senemail(parent.reporterEmail, message)
