@@ -15,15 +15,16 @@ module.exports = async (req, res) => {
     }else{
         imageURl = req.file.path;
     }
-    const { shelterName, name, age, gender, description, foundlocation, foundTime, policeSationID,
+    const { shelterName, name, age, gender, description, foundlocation, foundTime,
         finderName, finderNationID, finderPhone, finderEmail } = req.body;
+        let policeSationID = req.userID;
     try {
-
+ 
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             const parent = await reportModel.findOne({ _id: id });
             if (parent) {
-                if (parent.status == "undefined") {
+                if (parent.status == "hold") {
                     const shelter = await userModel.findOne({ userName: shelterName });
                     bycrpt.hash(finderNationID, 5, async (err, hash) => {
                         if (err) {

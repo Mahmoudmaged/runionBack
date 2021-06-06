@@ -2,21 +2,22 @@ const homelessModel = require("../../model/homeless.model");
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt')
 const fs = require('fs');
-const request = require('request');
+const request = require("request-promise");
+const reportModel = require("../../model/report.model");
 module.exports = async (req, res) => {
-    let  imageURl ;
-    if(req.file == undefined){
-     res.json({message:"in-valid image"})
-    }else{
+    let imageURl;
+    if (req.file == undefined) {
+        res.json({ message: "in-valid image" })
+    } else {
         imageURl = req.file.path;
     }
-    const { name, age, gender, foundlocation } = req.body;
+    const { name, startAge, endAge, gender } = req.body;
     try {
         let matchedResult = [];
         const errorvalidationResult = validationResult(req);
         if (errorvalidationResult.isEmpty()) {
             // look  for match in Report table
-            const allUsers = await reportModel.findOne({ gender })
+            const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
             if (allUsers) {
                 for (let i = 0; i < allUsers.length; i++) {
                     const options = {
@@ -39,31 +40,25 @@ module.exports = async (req, res) => {
                             }
                         }
                     };
+                       await request(options ,  (error, response, body)=> {
+                            if (error) throw new Error(error);
+                            let jsonVariable = JSON.parse(body)
+                            if (jsonVariable['data'].similarPercent >= 75) {
+                                matchedResult.push({
+                                    foundList: allUsers[i],
+                                    faceSimilarPercent: jsonVariable['data'].similarPercent
+                                });
 
-                    request(options, function (error, response, body) {
-                        if (error) throw new Error(error);
-                        let jsonVariable = JSON.parse(body)
-                        if (jsonVariable['data'].similarPercent >= 75) {
-                            matchedResult.push({
-                                foundList: allUsers[i],
-                                faceSimilarPercent: jsonVariable['data'].similarPercent
-                            });
-                            res.json(matchedResult)
-
-                        } else if (allUsers[i].name == name
-                            && allUsers[i].age == age
-                            && allUsers[i].lostLocation == foundlocation) {
-                            matchedResult.push({
-                                foundList: allUsers[i],
-                                faceSimilarPercent: jsonVariable['data'].similarPercent
-                            });
-                            res.json(matchedResult)
-                        } else {
-                            res.json({ message: "notfound" })
-                        }
-
-                    });
+                            } else if (allUsers[i].name === name) {
+                                matchedResult.push({
+                                    foundList: allUsers[i],
+                                    faceSimilarPercent: jsonVariable['data'].similarPercent
+                                });
+                            } 
+                        });
                 }
+                    res.json(matchedResult)
+               
             } else {
                 res.json({ message: "gender not fount woulf u like   continue to add", matchedResult })
             }
@@ -74,15 +69,13 @@ module.exports = async (req, res) => {
             res.json({
                 message: "errorvalidationResult",
                 errorvalidationResultArray: errorvalidationResult.array(),
-                oldInputs: {
-                    Name, age, imageURl, foundlocation,
-                   l
-                }
+                oldInputs: { name, startAge, endAge, gender, imageURl }
             })
 
         }
     } catch (error) {
-        res.json({ message: "catch error" })
+        // console.log(error);
+        // res.json({ message: "catch error"  , error})
     }
 
 

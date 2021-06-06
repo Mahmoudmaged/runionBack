@@ -1,6 +1,7 @@
 const app = require('express').Router();
 const auth = require("../middleWare/authentication/auth");
 const schedule = require("node-schedule")
+
 /*================================= Start  SignUp Controller ===================================== */
 //Start SignUp
 const signUpController = require("../controller/signUp/signUp.controller");
@@ -38,9 +39,12 @@ app.post('/updatePassword',
 
 
 /*start search  in report before add it in homless DB*/
-const searchInReportBeforAddInhomeless = require("../controller/homless/searchInReport")
-app.post('/searchInReportBeforAddInReport',
-    auth.authentication, auth.authRole("policeStation"),
+const searchInReportBeforAddInhomeless = require("../controller/homless/searchInReport");
+const searchInReportBeforAddInhomelessValidations= require("../middleWare/validations/searchInHomeless.validators")
+app.post('/searchInReportBeforAddInHomeLess',
+    auth.authentication,
+     auth.authRole(["superAdmin","policeStation"]),
+     searchInReportBeforAddInhomelessValidations,
     searchInReportBeforAddInhomeless);
 /*Start  communicate  with parnt of homelsse of foundperson in Repoert */
 const communicateToParentofHomlessController = require("../controller/homless/communicateToParentofHomless.controller")
@@ -153,26 +157,26 @@ app.get('/displayPoliceStations',
 
 /*================================= End  SuperAdmin Controller ===================================== */
 /*================================= Start  schedule part ===================================== */
-async function chagngeRepot() {
+// async function chagngeRepot() {
 
-    const reportList = await reportModel.find({});
-    for (let i = 0; i < reportList.length; i++) {
+//     const reportList = await reportModel.find({});
+//     for (let i = 0; i < reportList.length; i++) {
 
-        if (reportList[i] - 48 == 0) {
-            await reportModel.updateOne({ _id: reportList[i].id }, { status: active });
-        }
+//         if (reportList[i] - 48 == 0) {
+//             await reportModel.updateOne({ _id: reportList[i].id }, { status: active });
+//         }
 
-    }
+//     }
 
-}
-schedule.scheduleJob(`0 * * * *`, async () => {
-    try {
-        await chagngeRepot();
-    } catch (error) {
-        // console.log('');
-    }
+// }
+// schedule.scheduleJob(`0 * * * *`, async () => {
+//     try {
+//         await chagngeRepot();
+//     } catch (error) {
+//         // console.log('');
+//     }
 
-});
+// });
 /*================================= End  schedule part ===================================== */
 
 module.exports = app;

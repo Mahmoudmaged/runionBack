@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express()
-const port = 3000;
+const port = process.env.PORT || 3000;
 const path = require("path")
 const multer = require("multer");
 var cors = require('cors')
@@ -11,7 +11,9 @@ app.use(express.static(path.join(__dirname,'public')));
 // app.use(express.static(path.join("uploadImages")))
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-
+app.get('/', (req, res) => {
+   res.json({message:"welcome  In Reunion System"}) ;
+});
 app.use("/uploadImages", express.static(path.join("uploadImages")))
 
 app.use(cors());
@@ -24,7 +26,7 @@ var storage = multer.diskStorage({
     }
 
 }) 
-function fileFilter (req, file, cb) {
+function fileFilter (req, file, cb ) {
 
 
     if(file.mimetype==="image/png" 

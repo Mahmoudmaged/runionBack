@@ -1,15 +1,17 @@
 const homelessModel = require("../../model/homeless.model");
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
-module.exports = async  (req, res) => {
-    let  imageURl ;
-    if(req.file == undefined){
-     res.json({message:"in-valid image"})
-    }else{
+const userModel = require("../../model/user.model");
+module.exports = async (req, res) => {
+    let imageURl;
+    if (req.file == undefined) {
+        res.json({ message: "in-valid image" })
+    } else {
         imageURl = req.file.path;
     }
-    const { name, age, gender, description, foundlocation, foundTime, shelterID, policeSationID,
+    const { name, age, gender, description, foundlocation, foundTime, shelterName,
         finderName, finderNationID, finderPhone, finderEmail } = req.body;
+    let policeSationID = req.userID;
     try {
         const validationError = validationResult(req);
         console.log("jjjjjjjjjj");
@@ -19,20 +21,33 @@ module.exports = async  (req, res) => {
             if (homeless) {
                 res.json({ message: "already exist", homeless })
             } else {
-                bcrypt.hash(finderNationID, 6, async(err, hash) =>{
-                    if (err) {
-                        res.json({ message: "hash error" });
-                        
-                    } else {
-                        await homelessModel.insertMany({
+                let shelter = await userModel.findOne({ userName: shelterName })
+                if (shelter) {
+                    bcrypt.hash(finderNationID, 6, async (err, hash) => {
+                        if (err) {
+                            res.json({ message: "hash error" });
+
+                        } else {
+
+                            await homelessModel.insertMany({
+                                name, age, gender, imageURl, description,
+                                foundlocation, foundTime, shelterID: shelter._id, policeSationID,
+                                finderName, finderNationID: hash, finderPhone, finderEmail
+                            });
+                            res.json({ message: "added successfully" });
+                        }
+                    });
+                } else {
+                    res.json({
+                        message: "in-valid shelter id", oldInputs: {
                             name, age, gender, imageURl, description,
-                            foundlocation, foundTime, shelterID, policeSationID,
-                            finderName, finderNationID:hash, finderPhone, finderEmail
-                        });
-                        res.json({ message: "added successfully" });
-                    }
-                });
-              
+                            foundlocation, foundTime, shelterName, policeSationID,
+                            finderName, finderNationID, finderPhone, finderEmail
+                        }
+                    })
+                }
+
+
             }
         } else {
             res.json({
@@ -40,7 +55,7 @@ module.exports = async  (req, res) => {
                 errorMessage: validationError.array(),
                 oldInputs: {
                     name, age, gender, imageURl, description,
-                    foundlocation, foundTime, shelterID, policeSationID,
+                    foundlocation, foundTime, shelterName, policeSationID,
                     finderName, finderNationID, finderPhone, finderEmail
                 }
             });

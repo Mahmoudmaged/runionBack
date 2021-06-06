@@ -10,7 +10,7 @@ module.exports =  async (req, res) => {
         const report = await reportModel.findOne({ _id: id });
         if (report) {
             await reportModel.updateOne({ _id: report._id }, { status: 'closed' });
-            await homelessModel.updateOne({ reportID: report._id }, { statuss: 'closed' });
+            await homelessModel.updateOne({ reportID: report._id }, { status: 'closed' });
             res.json({ message: "report and homless closed successfully" });
         } else {
             res.json({ message: "report not found" });
