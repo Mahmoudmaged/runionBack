@@ -10,7 +10,7 @@
   "engines": {
     "node":"14.15.3"
   },
-  "author": "",
+  "author": "mahmoudElwan",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
