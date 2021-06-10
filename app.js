@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 app.use("/uploadImages", express.static(path.join("uploadImages")))
 
 
-var whitelist = ['https://runiongpsystem.herokuapp.com', 'http://localhost:4200']
+var whitelist = ['http://localhost:4200']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
