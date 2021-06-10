@@ -29,13 +29,14 @@ app.use("/uploadImages", express.static(path.join("uploadImages")))
 // }
 // app.use(cors(corsOptions));
 
-app.use( (req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin" ,"*");
-    res.setHeader("Access-Control-Allow-Methods" ,"*");
-    res.setHeader("Access-Control-Allow-Headers" ,"Authorization");
-    next();
+// app.use( (req, res, next) => {
+//     res.setHeader("Access-Control-Allow-Origin" ,"*");
+//     res.setHeader("Access-Control-Allow-Methods" ,"*");
+//     res.setHeader("Access-Control-Allow-Headers" ,"Authorization");
+//     next();
 
-});
+// });
+app.use(cors());
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploadImages");
