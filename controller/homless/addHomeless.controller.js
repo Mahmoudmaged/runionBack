@@ -14,8 +14,6 @@ module.exports = async (req, res) => {
     let policeSationID = req.userID;
     try {
         const validationError = validationResult(req);
-        console.log("jjjjjjjjjj");
-        console.log(validationError.isEmpty());
         if (validationError.isEmpty()) {
             const homeless = await homelessModel.findOne({ name });
             if (homeless) {

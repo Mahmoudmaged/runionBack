@@ -5,8 +5,10 @@ const fs = require('fs');
 const request = require("request-promise");
 const reportModel = require("../../model/report.model");
 module.exports = async (req, res) => {
+    const file =req.file;
+    // console.log(file);
     let imageURl;
-    if (req.file == undefined) {
+    if (!file) {
         res.json({ message: "in-valid image" })
     } else {
         imageURl = req.file.path;
@@ -57,7 +59,7 @@ module.exports = async (req, res) => {
                             } 
                         });
                 }
-                    res.json(matchedResult)
+                    res.json({message:"search Done" ,matchedResult});
                
             } else {
                 res.json({ message: "gender not fount woulf u like   continue to add", matchedResult })

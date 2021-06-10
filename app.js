@@ -16,7 +16,18 @@ app.get('/', (req, res) => {
 });
 app.use("/uploadImages", express.static(path.join("uploadImages")))
 
-app.use(cors());
+
+var whitelist = ['https://runiongpsystem.herokuapp.com/', 'http://localhost:4200/']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+app.use(cors(corsOptions));
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploadImages");
@@ -40,9 +51,17 @@ function fileFilter(req, file, cb) {
     }
 
 }
-app.use(multer({ dest: "files", fileFilter, storage }).single("img"));
+const upolad = multer({ dest: "uploadImages/" ,fileFilter, storage })
+app.use(upolad.single("img"));
 app.use(require("./routers/app.router"));
-
+app.post('/file',upolad.single("img"), (req, res) => {
+    console.log(req.file);
+    if (req.file == undefined) {
+        res.json("error")
+    } else {
+        res.json("uploades")
+    }
+});
 mongoose.connect('mongodb+srv://MahmoudElwan:01015776658@mahmoudelwan-nodejs.jfspq.mongodb.net/ReunionGP',
     { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
         console.log("mongoDB is Connected");
