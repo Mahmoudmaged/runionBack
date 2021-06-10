@@ -17,17 +17,25 @@ app.get('/', (req, res) => {
 app.use("/uploadImages", express.static(path.join("uploadImages")))
 
 
-var whitelist = ['http://localhost:4200']
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-}
-app.use(cors(corsOptions));
+// var whitelist = ['http://localhost:4200']
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   }
+// }
+// app.use(cors(corsOptions));
+
+app.use( (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin" ,"*");
+    res.setHeader("Access-Control-Allow-Methods" ,"*");
+    res.setHeader("Access-Control-Allow-Headers" ,"Authorization");
+    next();
+
+});
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploadImages");
@@ -37,6 +45,8 @@ var storage = multer.diskStorage({
     }
 
 })
+
+
 function fileFilter(req, file, cb) {
 
 
