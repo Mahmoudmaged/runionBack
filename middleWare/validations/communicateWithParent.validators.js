@@ -5,7 +5,7 @@ module.exports =[
     body("gender").isString(),
     body("shelterName").matches(/[A-Z][a-zA-Z][^#&<>\"~;$^%{}?]{1,20}$/),
     body("description").isString(),
-    body("foundlocation").contains('https://www.google.com/maps'),
+    body("foundlocation").isString(),
     body("foundTime").isDate(),
     // body("shelterID").notEmpty(),
     body("finderName").matches(/^[\u0621-\u064Aء-ئ][^#&<>\"~;$^%{}?]{2,20}$/),

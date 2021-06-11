@@ -5,7 +5,7 @@ module.exports =[
     body("gender").isString(),
     // body("imageURl").isString(),
     body("description").isString(),
-    body("foundlocation").contains('https://www.google.com/maps'),
+    body("foundlocation").isString(),
     body("foundTime").isDate(),
     body("shelterName").notEmpty(),
     // body("policeSationID").notEmpty(),

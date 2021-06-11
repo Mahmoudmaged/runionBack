@@ -1,6 +1,8 @@
 const homelessModel = require("../../model/homeless.model");
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
+const CryptoJS = require("crypto-js");
+ 
 const userModel = require("../../model/user.model");
 module.exports = async (req, res) => {
     let imageURl;
@@ -21,20 +23,16 @@ module.exports = async (req, res) => {
             } else {
                 let shelter = await userModel.findOne({ userName: shelterName })
                 if (shelter) {
-                    bcrypt.hash(finderNationID, 6, async (err, hash) => {
-                        if (err) {
-                            res.json({ message: "hash error" });
-
-                        } else {
-
+                  
+                    let ciphertext =  CryptoJS.AES.encrypt(finderNationID, 'secret key 123').toString();
+ 
                             await homelessModel.insertMany({
                                 name, age, gender, imageURl, description,
                                 foundlocation, foundTime, shelterID: shelter._id, policeSationID,
-                                finderName, finderNationID: hash, finderPhone, finderEmail
+                                finderName, finderNationID: ciphertext, finderPhone, finderEmail
                             });
                             res.json({ message: "added successfully" });
-                        }
-                    });
+                       
                 } else {
                     res.json({
                         message: "in-valid shelter id", oldInputs: {
