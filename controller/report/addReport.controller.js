@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const reportModel = require('../../model/report.model');
 const sendMail = require('../email/senemail.contrroler');
 const bcrypt = require('bcrypt');
+const CryptoJS = require("crypto-js");
 const userModel = require('../../model/user.model');
 async function addReport(req, res, data, myemail, meassage) {
     try {
@@ -38,32 +39,25 @@ module.exports = async (req, res) => {
                         res.json({ message: " u report already submited once", report })
                     } else if (report.status === 'closed') {
 
-                        bcrypt.hash(reporterNationID, 5, async (err, hash) => {
-                            if (err) {
-                                res.json({ message: "hashError" });
-                            } else {
+                    let ciphertext =  CryptoJS.AES.encrypt(reporterNationID, 'secret key 123').toString();
+                        
                                 await addReport(req, res, {
                                     name, age, description, gender, imageURl, lostLocation, lostTime, reporterName,
-                                    reporterNationID: hash, reporterPhone, reporterEmail, status, policeStationID:policeStation._id, time: Date.now()
+                                    reporterNationID: ciphertext, reporterPhone, reporterEmail, status, policeStationID:policeStation._id, time: Date.now()
                                 }, reporterEmail, message);
                                 res.json({ message: "Done" });
-                            }
-                        });
 
                     }
                 } else {
 
-                    bcrypt.hash(reporterNationID, 5, async (err, hash) => {
-                        if (err) {
-                            res.json({ message: "hashError" });
-                        } else {
+                    let ciphertext =  CryptoJS.AES.encrypt(reporterNationID, 'secret key 123').toString();
+                   
                             await addReport(req, res, {
                                 name, age, description, gender, imageURl, lostLocation, lostTime, reporterName,
-                                reporterNationID: hash, reporterPhone, reporterEmail, status,  policeStationID:policeStation._id, time: Date.now()
+                                reporterNationID: ciphertext, reporterPhone, reporterEmail, status,  policeStationID:policeStation._id, time: Date.now()
                             }, reporterEmail, message);
                             res.json({ message: "Done" });
-                        }
-                    });
+                        
                 }
             } else {
                 res.json({
