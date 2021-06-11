@@ -36,16 +36,11 @@ app.post('/updatePassword',
 /*================================= End  SignIn Controller ===================================== */
 
 /*================================= Start homeLess Controller ===================================== */
-const cros = require("cors")
+// const cros = require("cors")
 /*start search  in report before add it in homless DB*/
 const searchInReportBeforAddInhomeless = require("../controller/homless/searchInReport");
 const searchInReportBeforAddInhomelessValidations= require("../middleWare/validations/searchInHomeless.validators")
-app.post('/searchInReportBeforAddInHomeLess', cros({
-    "origin":"http://localhost:4200",
-    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-    "preflightContinue": false,
-    "optionsSuccessStatus": 204
-  }),
+app.post('/searchInReportBeforAddInHomeLess', 
     auth.authentication,
      auth.authRole(["superAdmin","policeStation"]),
      searchInReportBeforAddInhomelessValidations,
