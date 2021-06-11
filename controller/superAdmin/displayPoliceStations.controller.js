@@ -3,7 +3,7 @@ const userModel = require("../../model/user.model")
 
 module.exports = async(req,res)=>{
     try {
-        const policeStationList = await userModel.find({role:"policeStation"});
+        const policeStationList = await userModel.find({role:"policeStation" , aprove:true});
        res.json({message:"done" , policeStationList}) 
 
     } catch (error) {
