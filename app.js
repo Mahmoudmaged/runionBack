@@ -4,14 +4,12 @@ const port = process.env.PORT || 3000;
 const path = require("path")
 const multer = require("multer");
 var cors = require('cors')
-app.use(cors())
 const mongoose = require('mongoose');
 app.use(express.urlencoded({ extends: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use(express.static(path.join("uploadImages")))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.json({ message: "welcome  In Reunion System" });
