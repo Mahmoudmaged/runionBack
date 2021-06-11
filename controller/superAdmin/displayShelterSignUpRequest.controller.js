@@ -5,7 +5,8 @@ module.exports = async (req, res) => {
             aprove: false,
             confirmEmail: true, role: "shelter"
         });
-        res.json(requestList);
+        res.json({message:'done',requestList});
+
     } catch (error) {
         res.json({ message: "can not get any users" });
     }
