@@ -141,7 +141,7 @@ app.get('/deleteUser/:id',
     auth.authentication, auth.authRole("superAdmin"),
     require("../controller/superAdmin/deleteUser.controller"));
 // changeRole 
-app.get('/changeRole/:id', auth.authentication,
+app.post('/changeRole/:id', auth.authentication,
     auth.authRole("superAdmin"),
     require("../controller/superAdmin/changeRole.controller"));
 //display shelter 
