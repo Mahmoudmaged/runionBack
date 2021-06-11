@@ -121,11 +121,16 @@ app.get('/viewStationReport',
 /*================================= Start  SuperAdmin Controller ===================================== */
 
 //Start Display SignUp Request
-const displaySignUpRequestController = require('../controller/superAdmin/displaySignUpRequest.controller');
+const displayPoliceStationSignUpRequestController = require('../controller/superAdmin/displayPoliceSationSignUpRequest.controller');
 app.get('/displaySignUpRequest',
     auth.authentication,
     auth.authRole("superAdmin"),
-    displaySignUpRequestController);
+    displayPoliceStationSignUpRequestController);
+const displayShelterSignUpRequestController = require('../controller/superAdmin/displayShelterSignUpRequest.controller');
+app.get('/displayShelterSignUpRequest',
+    auth.authentication,
+    auth.authRole("superAdmin"),
+    displayShelterSignUpRequestController);
 //End Display SignUp Request
 
 //Start Aprrove SignUp Request
@@ -134,6 +139,7 @@ app.get('/aprroveSignUpRequest/:id',
     auth.authentication,
     auth.authRole("superAdmin"),
     aprroveSignUpRequestController);
+    
 //End Aprrove SignUp Request
 
 //delete user

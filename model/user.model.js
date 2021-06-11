@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema({
    email:{type:String},
    phone:{type:Number},
    location:{type:String},
-   role:{type:String , default:'adminstration'},
+   role:{type:String , default:'user'},
    confirmEmail:{type:Boolean , default:false},
    aprove:{type:Boolean , default:false},
    forgetCode:{type:Number},
