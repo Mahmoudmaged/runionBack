@@ -52,6 +52,10 @@ module.exports = async (req, res ,next) => {
                         }
                     };
                     await request(options, (error, response, body) => {
+                        
+                        res.setHeader('Access-Control-Allow-Origin','*');
+                        res.setHeader('Access-Control-Allow-Methods','*');
+
                         if (error) throw new Error(error);
                         let jsonVariable = JSON.parse(body)
                         if (jsonVariable['data'].similarPercent >= 75) {
