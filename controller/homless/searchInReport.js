@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const fs = require('fs');
 const request = require("request-promise");
 const reportModel = require("../../model/report.model");
+const cros = require('cors')
 module.exports = async (req, res) => {
     const file =req.file;
     // console.log(file);
@@ -22,14 +23,18 @@ module.exports = async (req, res) => {
             const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
             if (allUsers) {
                 for (let i = 0; i < allUsers.length; i++) {
+                
+                    cros()
                     const options = {
+                       
                         method: 'POST',
                         url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
+
                         headers: {
                             'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
                             'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
                             'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
-                            'Access-Control-Allow-Origin': '*',
+                            
                             useQueryString: true
                         },
                         formData: {
