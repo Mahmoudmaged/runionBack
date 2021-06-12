@@ -23,17 +23,10 @@ module.exports = async (req, res ,next) => {
             // look  for match in Report table
             const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
             if (allUsers) {
-                for (let i = 0; i < allUsers.length; i++) {
-                    res.setHeader('Access-Control-Allow-Origin','*')  ;
-                    res.setHeader('Access-Control-Allow-Methods','*')  ; 
-                    res.setHeader('Access-Control-Allow-headers','token')  ;        
+                for (let i = 0; i < allUsers.length; i++) {     
 
-
-// app.post('https://face-verification2.p.rapidapi.com/FaceVerification', , headers);
                     const options = {
-                        method: 'POST',
-                        url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
-                      
+                        
                         headers: {
                             'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
                             'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
@@ -44,6 +37,9 @@ module.exports = async (req, res ,next) => {
 
                             useQueryString: true
                         },
+                        method: 'POST',
+                        url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
+        
                         formData: {
                             photo1: {
                                 value: fs.createReadStream(imageURl),
