@@ -4,9 +4,10 @@ const bcrypt = require('bcrypt')
 const fs = require('fs');
 const request = require("request-promise");
 const reportModel = require("../../model/report.model");
-const cros = require('cors')
+const cros = require('cors');
+const app = require("../../routers/app.router");
 
-module.exports = async (req, res ,next) => {
+module.exports = async (req, res, next) => {
 
     const file = req.file;
     // console.log(file);
@@ -24,16 +25,10 @@ module.exports = async (req, res ,next) => {
             // look  for match in Report table
             const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
             if (allUsers) {
-                for (let i = 0; i < allUsers.length; i++) {     
-                  res.setHeader('Access-Control-Allow-Origin','*');
-                  res.setHeader('Access-Control-Allow-Methods','*');
+                for (let i = 0; i < allUsers.length; i++) {
+                    let options = {
 
-                    let  options = {
-                        'Access-Control-Allow-Origin':'*',
-                            'Access-Control-Allow-Methods':'POST',
                         headers: {
-                            'Access-Control-Allow-Origin':'*',
-                            'Access-Control-Allow-Methods':'POST',
                             'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
                             'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
                             'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
@@ -42,7 +37,7 @@ module.exports = async (req, res ,next) => {
                         },
                         method: 'POST',
                         url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
-        
+
                         formData: {
                             photo1: {
                                 value: fs.createReadStream(imageURl),
