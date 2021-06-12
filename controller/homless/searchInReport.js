@@ -25,7 +25,9 @@ module.exports = async (req, res ,next) => {
             const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
             if (allUsers) {
                 for (let i = 0; i < allUsers.length; i++) {     
-                
+                  res.setHeader('Access-Control-Allow-Origin','*');
+                  res.setHeader('Access-Control-Allow-Methods','*');
+
                     let  options = {
                         
                         headers: {
