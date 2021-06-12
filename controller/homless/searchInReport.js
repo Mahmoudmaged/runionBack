@@ -28,6 +28,7 @@ module.exports = async (req, res) => {
                     
                     const options = {
                         method: 'POST',
+                        origin:'*',
                         url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
 
                         headers: {
