@@ -57,6 +57,7 @@ module.exports = async (req, res ,next) => {
                 
                     
                     await request( options, (error, response, body) => {
+                        
                         if (error) throw new Error(error);
                         let jsonVariable = JSON.parse(body)
                         if (jsonVariable['data'].similarPercent >= 75) {
