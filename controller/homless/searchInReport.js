@@ -24,8 +24,10 @@ module.exports = async (req, res ,next) => {
             const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
             if (allUsers) {
                 for (let i = 0; i < allUsers.length; i++) {
-                    // res.setHeader('Access-Control-Allow-Origin','*')  ;
-                    // res.setHeader('Access-Control-Allow-Methods','*')  ;        
+                    res.setHeader('Access-Control-Allow-Origin','*')  ;
+                    res.setHeader('Access-Control-Allow-Methods','*')  ; 
+                    res.setHeader('Access-Control-Allow-headers','token')  ;        
+
 
 // app.post('https://face-verification2.p.rapidapi.com/FaceVerification', , headers);
                     const options = {
