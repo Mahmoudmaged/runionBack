@@ -6,6 +6,7 @@ const request = require("request-promise");
 const reportModel = require("../../model/report.model");
 const cros = require('cors')
 module.exports = async (req, res) => {
+    
     const file =req.file;
     // console.log(file);
     let imageURl;
@@ -24,9 +25,8 @@ module.exports = async (req, res) => {
             if (allUsers) {
                 for (let i = 0; i < allUsers.length; i++) {
                 
-                    cros()
+                    
                     const options = {
-                       
                         method: 'POST',
                         url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
 
