@@ -5,6 +5,36 @@ const fs = require('fs');
 const request = require("request-promise");
 const reportModel = require("../../model/report.model");
 const cros = require('cors')
+
+async function options(){
+    let  options = {
+                        
+        headers: {
+            'Access-Control-Allow-Origin':'*',
+            'Access-Control-Allow-Methods':'POST',
+            'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
+            'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
+            'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
+
+            useQueryString: true
+        },
+        method: 'POST',
+        url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
+
+        formData: {
+            photo1: {
+                value: fs.createReadStream(imageURl),
+                options: { filename: 'mg2.jpg', contentType: 'application/octet-stream' }
+            },
+            photo2: {
+                value: fs.createReadStream(allUsers[i].imageURl),
+                options: { filename: 'mg1.jpg', contentType: 'application/octet-stream' }
+            }
+        }
+    };
+
+    return options;
+}
 module.exports = async (req, res ,next) => {
 
     const file = req.file;
@@ -24,33 +54,9 @@ module.exports = async (req, res ,next) => {
             const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
             if (allUsers) {
                 for (let i = 0; i < allUsers.length; i++) {     
-
-                    const options = {
-                        
-                        headers: {
-                            'Access-Control-Allow-Origin':'*',
-                            'Access-Control-Allow-Methods':'POST',
-                            'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
-                            'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
-                            'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
-
-                            useQueryString: true
-                        },
-                        method: 'POST',
-                        url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
-        
-                        formData: {
-                            photo1: {
-                                value: fs.createReadStream(imageURl),
-                                options: { filename: 'mg2.jpg', contentType: 'application/octet-stream' }
-                            },
-                            photo2: {
-                                value: fs.createReadStream(allUsers[i].imageURl),
-                                options: { filename: 'mg1.jpg', contentType: 'application/octet-stream' }
-                            }
-                        }
-                    };
-                    await request(options, (error, response, body) => {
+                
+                    
+                    await request( options, (error, response, body) => {
                         if (error) throw new Error(error);
                         let jsonVariable = JSON.parse(body)
                         if (jsonVariable['data'].similarPercent >= 75) {
