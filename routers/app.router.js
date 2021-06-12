@@ -3,7 +3,7 @@ const auth = require("../middleWare/authentication/auth");
 const schedule = require("node-schedule")
 var cors = require('cors')
 
-app.options('https://face-verification2.p.rapidapi.com/FaceVerification', cors()) 
+// app.options('https://face-verification2.p.rapidapi.com/FaceVerification', cors()) 
 /*================================= Start  SignUp Controller ===================================== */
 //Start SignUp
 const signUpController = require("../controller/signUp/signUp.controller");
