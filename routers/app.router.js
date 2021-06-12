@@ -36,7 +36,7 @@ app.post('/updatePassword',
 /*================================= End  SignIn Controller ===================================== */
 
 /*================================= Start homeLess Controller ===================================== */
-const cros = require("cors")
+var cors = require('cors')
 /*start search  in report before add it in homless DB*/
 
 const searchInReportBeforAddInhomeless = require("../controller/homless/searchInReport");
