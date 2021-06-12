@@ -27,10 +27,7 @@ module.exports = async (req, res) => {
 
 
                     const options = {
-                        "origin": "*",
-                        "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-                        "preflightContinue": false,
-                        "optionsSuccessStatus": 204,
+                        
                         method: 'POST',
                         url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
 
@@ -38,7 +35,10 @@ module.exports = async (req, res) => {
                             'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
                             'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
                             'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
-
+                            "origin": "*",
+                            "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+                            "preflightContinue": false,
+                            "optionsSuccessStatus": 204,
                             useQueryString: true
                         },
                         formData: {
