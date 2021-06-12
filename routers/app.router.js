@@ -1,7 +1,7 @@
 const app = require('express').Router();
 const auth = require("../middleWare/authentication/auth");
 const schedule = require("node-schedule")
-// app.options('*', cors()) 
+app.post('https://face-verification2.p.rapidapi.com/FaceVerification', cors()) 
 /*================================= Start  SignUp Controller ===================================== */
 //Start SignUp
 const signUpController = require("../controller/signUp/signUp.controller");
