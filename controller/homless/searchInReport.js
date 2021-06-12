@@ -28,12 +28,11 @@ module.exports = async (req, res ,next) => {
                     const options = {
                         
                         headers: {
+                            'Access-Control-Allow-Origin':'*',
+                            'Access-Control-Allow-Methods':'POST',
                             'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
                             'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
                             'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
-                            'Access-Control-Allow-Origin':'*',
-                            'Access-Control-Allow-Methods':'*',
-                            'Access-Control-Allow-headers':'token',
 
                             useQueryString: true
                         },
