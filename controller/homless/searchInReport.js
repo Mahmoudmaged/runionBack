@@ -29,7 +29,8 @@ module.exports = async (req, res ,next) => {
                   res.setHeader('Access-Control-Allow-Methods','*');
 
                     let  options = {
-                        
+                        'Access-Control-Allow-Origin':'*',
+                            'Access-Control-Allow-Methods':'POST',
                         headers: {
                             'Access-Control-Allow-Origin':'*',
                             'Access-Control-Allow-Methods':'POST',
