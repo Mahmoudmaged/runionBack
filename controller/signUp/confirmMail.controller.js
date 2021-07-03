@@ -15,7 +15,8 @@ module.exports = async (req, res) => {
                     res.json({ message: "can not  verify  token" })
                 } else {
                     await userModel.updateOne({ email: decoded.email }, { confirmEmail: true });
-                    res.json({ message: "token verifed successfully" })
+                    console.log("confirmed");
+                    res.redirect("http://localhost:4200/#/");
                 }
             });
         } else {

@@ -4,6 +4,7 @@ var jwt = require('jsonwebtoken');
 function authentication(req, res, next) {
 
     const token = req.header("token");
+    console.log(token);
     try {
         // console.log(token);
         if (token != undefined && token != null && token) {

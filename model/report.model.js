@@ -12,7 +12,7 @@ const reportSchema = mongoose.Schema({
    //reporter info 
    reporterName:{type:String},
    reporterNationID:{type:String},
-   reporterPhone:{type:Number},
+   reporterPhone:{type:String},
    reporterEmail:{type:String},
    status:{type:String , default:"hold"},
    // policeStation info

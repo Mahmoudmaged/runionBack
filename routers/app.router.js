@@ -1,9 +1,9 @@
 const app = require('express').Router();
 const auth = require("../middleWare/authentication/auth");
 const schedule = require("node-schedule")
-var cors = require('cors')
-
-// app.options('https://face-verification2.p.rapidapi.com/FaceVerification', cors()) 
+const reportModel = require('../model/report.model');
+const fs = require('fs');
+const request = require("request-promise");
 /*================================= Start  SignUp Controller ===================================== */
 //Start SignUp
 const signUpController = require("../controller/signUp/signUp.controller");
@@ -25,29 +25,44 @@ app.post('/login', signInValidation, signInController);
 //forgetPassword
 const sendCodeValidation = require("../middleWare/validations/sendCode.validators")
 app.post('/forgetPassword', sendCodeValidation, require('../controller/signIn/forgetPassword.controller'));
+//check Code
+const checkCodeValidation = require("../middleWare/validations/checkCode.validators")
+app.post('/checkCode', checkCodeValidation, require("../controller/signIn/checkCode.controller"));
 // confirm Active Code
 const confirmCodeValidation = require("../middleWare/validations/confirmCode.validators")
-app.post('/confimActiveCode', confirmCodeValidation, require("../controller/signIn/confimActiveCodecontroller"));
+app.put('/confimActiveCode', confirmCodeValidation, require("../controller/signIn/confimActiveCodecontroller"));
 //updatePassword
 const updatePasswordValidators = require("../middleWare/validations/updatePassword.validators")
-app.post('/updatePassword',
+app.patch('/updatePassword',
     auth.authentication,
     auth.authRole(["superAdmin", "policeStation", "shelter"]),
     updatePasswordValidators, require("../controller/signIn/updatePassword.controller"));
+
+app.patch('/updateimage',
+    auth.authentication,
+    auth.authRole(["superAdmin", "policeStation", "shelter"]),
+    require("../controller/signIn/uploadImag.controller"));
+
+//update userInfo
+const updateuserInfo = require("../middleWare/validations/userInfo.validators")
+app.put('/updateuserInfo',
+    auth.authentication,
+    auth.authRole(["superAdmin", "policeStation", "shelter"]),
+    updateuserInfo,
+    require("../controller/signIn/updateUserNameAndProfile.controller"));
 /*End signIn*/
 /*================================= End  SignIn Controller ===================================== */
 
 /*================================= Start homeLess Controller ===================================== */
-// var cors = require('cors')
-/*start search  in report before add it in homless DB*/
 
+
+/*start search  in report before add it in homless DB*/
 const searchInReportBeforAddInhomeless = require("../controller/homless/searchInReport");
-const searchInReportBeforAddInhomelessValidations= require("../middleWare/validations/searchInHomeless.validators")
-// app.options('/searchInReportBeforAddInHomeLess', cors())
-app.post('/searchInReportBeforAddInHomeLess', 
+const searchInReportBeforAddInhomelessValidations = require("../middleWare/validations/searchInHomeless.validators")
+app.post('/searchInReportBeforAddInHomeLess',
     auth.authentication,
-     auth.authRole(["superAdmin","policeStation"]),
-     searchInReportBeforAddInhomelessValidations,
+    auth.authRole(["superAdmin", "policeStation"]),
+    searchInReportBeforAddInhomelessValidations,
     searchInReportBeforAddInhomeless);
 /*Start  communicate  with parnt of homelsse of foundperson in Repoert */
 const communicateToParentofHomlessController = require("../controller/homless/communicateToParentofHomless.controller")
@@ -70,13 +85,22 @@ app.get('/closeHomless/:id',
     auth.authentication,
     auth.authRole(["superAdmin", "policeStation"]),
     require("../controller/homless/closeHomeless.controller"));
+//undifined homless with no reportse
+app.get('/undifinedHomless/:id',
+    auth.authentication,
+    auth.authRole(["superAdmin", "policeStation"]),
+    require("../controller/homless/undifinedHomeless.controller"));
 
 //displayHomeless by ID
 app.get('/seachHomelessByID/:id',
     auth.authentication,
     auth.authRole(["superAdmin", "policeStation", 'shelter']),
     require("../controller/homless/seachHomelessByID.controller"));
-    
+//displayHomeless by ID email
+
+app.get('/seachHomelessByIDEmail/:id',
+    require("../controller/homless/seachHomelessByIDEmail.controller"));
+
 //getAllHomeless 
 app.get('/viewAllHomeless',
     auth.authentication,
@@ -87,7 +111,11 @@ app.get('/viewAllShelterHomeless',
     auth.authentication,
     auth.authRole(["shelter"]),
     require("../controller/homless/getAllShelterRersident.controller"));
-
+//update Report
+app.post('/updaterhomeless/:id',
+    auth.authentication,
+    auth.authRole(["superAdmin", "policeStation"]),
+    require("../controller/homless/editHomeless.controller"));
 
 /*================================= End homeLess Controller ===================================== */
 /*==================================================================================================================== */
@@ -118,6 +146,22 @@ app.get('/viewStationReport',
     auth.authentication,
     auth.authRole(["policeStation"]),
     require("../controller/report/viewStationReport.controller"));
+//close Report
+app.get('/closeReport/:id',
+    auth.authentication,
+    auth.authRole(["superAdmin", "policeStation"]),
+    require("../controller/report/closeReport.controller"));
+//activate Report
+
+app.get('/activateReport/:id',
+    auth.authentication,
+    auth.authRole(["superAdmin", "policeStation"]),
+    require("../controller/report/adminActiveReport.controller"));
+//update Report
+app.post('/updaterReport/:id',
+    auth.authentication,
+    auth.authRole(["superAdmin", "policeStation"]),
+    require("../controller/report/editReport.controller"));
 
 /*================================= End  Report Controller ===================================== */
 
@@ -138,11 +182,12 @@ app.get('/displayShelterSignUpRequest',
 
 //Start Aprrove SignUp Request
 const aprroveSignUpRequestController = require("../controller/superAdmin/approveRequest.controller");
+
 app.get('/aprroveSignUpRequest/:id',
     auth.authentication,
     auth.authRole("superAdmin"),
     aprroveSignUpRequestController);
-    
+
 //End Aprrove SignUp Request
 
 //delete user
@@ -158,7 +203,7 @@ app.get('/displayShelters',
     auth.authentication,
     auth.authRole(["superAdmin"]),
     require("../controller/superAdmin/displayShelters.controller"));
-//display shelter 
+//display policeSation 
 app.get('/displayPoliceStations',
     auth.authentication,
     auth.authRole(["superAdmin"]),
@@ -166,26 +211,116 @@ app.get('/displayPoliceStations',
 
 /*================================= End  SuperAdmin Controller ===================================== */
 /*================================= Start  schedule part ===================================== */
-// async function chagngeRepot() {
+var moment = require('moment');
+const homelessModel = require('../model/homeless.model');
+const sendEmail = require('../controller/email/senemail.contrroler');
+async function chagngeRepot() {
+    const reportList = await reportModel.find({ status: "hold" });
 
-//     const reportList = await reportModel.find({});
-//     for (let i = 0; i < reportList.length; i++) {
+    for (let i = 0; i < reportList.length; i++) {
+        let hours = moment().diff(moment(new Date(reportList[i].time)), 'hours');
+        if (hours + 2 >= 24) {
+            console.log("update");
+            await reportModel.findOneAndUpdate({ _id: reportList[i]._id }, { status: "active" })
+        } else {
+            console.log("nnnnnnnnnnnnnnnnnnnnno");
+        }
+    }
 
-//         if (reportList[i] - 48 == 0) {
-//             await reportModel.updateOne({ _id: reportList[i].id }, { status: active });
-//         }
 
-//     }
+}
 
+
+async function faceCompare() {
+    console.log("k");
+    let homelessList = await homelessModel.find({ status: "undefined" }).populate('shelterID');
+    const reportList = await reportModel.find({ status: "active" });
+
+    for (let i = 0; i < homelessList.length; i++) {
+
+        for (let j = 0; j < reportList.length; j++) {
+            if ((reportList[j].age + 5 >= homelessList[i].age || reportList[j].age - 5 <= homelessList[i].age) &&
+                reportList[j].gender == homelessList[i].gender) {
+                const options = {
+                    method: 'POST',
+                    origin: '*',
+                    url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
+                    headers: {
+                        'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
+                        'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
+                        'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
+                        useQueryString: true
+                    },
+                    formData: {
+                        photo1: {
+                            value: fs.createReadStream(homelessList[i].imageURl),
+                            options: { filename: 'mg2.jpg', contentType: 'application/octet-stream' }
+                        },
+                        photo2: {
+                            value: fs.createReadStream(reportList[j].imageURl),
+                            options: { filename: 'mg1.jpg', contentType: 'application/octet-stream' }
+                        }
+                    }
+                };
+                await request(options, async (error, response, body) => {
+                    if (error) throw new Error(error);
+                    let jsonVariable = JSON.parse(body)
+                    if (jsonVariable['data'].similarPercent >= 75 || allUsers[i].name === homelessList[i].name) {
+
+                        //commmunicate attach
+                        console.log("matched" + homelessList[i]);
+
+                        let message = `
+                        <section> 
+                        <div style="padding:  50px 100px;border-radius: 20px;background-color: white; text-align: center;">
+                            <div>
+                                <img src="https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/envelope-icon.png" width="100px" alt="">
+                                <br>
+                                <br>
+                                <a href="http://localhost:4200/#/homelessID/${homelessList[i]._id}">We found a matching result with report's Id:  ${reportList[j]._id}, please check it </a>
+                                <br>
+                                <br>
+                                <a href="${homelessList[i].shelterID.location}">Shelter location </a>
+                            </div>
+                    </div>
+                </section> `;
+                        await homelessModel.insertMany({ reportID: reportList[j]._id, status: "inCommunicate" });
+                        await reportModel.updateOne({ _id: reportList[j]._id },
+                            { status: "inCommunicate" });
+                        await sendEmail(reportList[j].reporterEmail, message)
+
+
+
+                    }
+                });
+            }
+        }
+
+
+    }
+
+}
+schedule.scheduleJob(`0  * * * *`, async () => {
+    try {
+        console.log("run");
+        await chagngeRepot();
+        await faceCompare();
+    } catch (error) {
+        // console.log('');`
+    }
+
+});
+
+
+// function run(){
+//     let myparadox = new Date();
+//     myparadox.setTime(myparadox.getTime() + (2*60*60*1000))
+//     let paradox= myparadox.toISOString();
+//     paradox = new Date(paradox)
+//     console.log(paradox);    
 // }
-// schedule.scheduleJob(`0 * * * *`, async () => {
-//     try {
-//         await chagngeRepot();
-//     } catch (error) {
-//         // console.log('');
-//     }
 
-// });
+// run();
 /*================================= End  schedule part ===================================== */
 
 module.exports = app;

@@ -1,6 +1,7 @@
 const { body} = require('express-validator');
 
 module.exports =[
+  body("oldPassword").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/),
     body("password").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/),
     body('cPassword').custom((value, { req }) => {
         if (value !== req.body.password) {

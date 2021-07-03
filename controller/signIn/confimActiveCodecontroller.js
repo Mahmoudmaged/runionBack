@@ -9,7 +9,11 @@ module.exports = async (req, res) => {
         if (errors.isEmpty()) {
             const user = await userModel.findOne({ email });
             if (user) {
-                if (user.forgetCode === code) {
+
+                const match = await bcrypt.compare(code, user.forgetCode);
+
+                if (match) {
+
                     bcrypt.hash(password, 8, async (err, hash) => {
                         if (err) {
                             res.json({ message: "hash error" });
@@ -18,9 +22,11 @@ module.exports = async (req, res) => {
                             randomCode = randomCode.toString();
                             randomCode = randomCode.slice(2, 5);
                             randomCode = parseInt(randomCode);
-                            await userModel.updateOne({ _id: user._id }, { password: hash ,  forgetCode: randomCode  })
-                            res.json({ message: "password updated Successfully" });
-
+                            randomCode = randomCode.toString();
+                            bcrypt.hash(randomCode, 6, async (err, hashCode) => {
+                                await userModel.updateOne({ _id: user._id }, { password: hash, forgetCode: hashCode })
+                                res.json({ message: "password updated Successfully" });
+                            });
                         }
                     });
                 } else {
@@ -46,3 +52,4 @@ module.exports = async (req, res) => {
         })
     }
 }
+

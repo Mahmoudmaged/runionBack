@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
         const validationResultError = validationResult(req);
         if (validationResultError.isEmpty()) {
             let matchedResult = [];
-            let homelessList = await homelessModel.find({ gender, age: { $gte: startAge, $lte: endAge } });
+            let homelessList = await homelessModel.find({ gender, age: { $gte: startAge, $lte: endAge } }).populate(['shelterID','policeSationID']);
 
             if (homelessList) {
                 console.log(homelessList.length);
@@ -48,18 +48,13 @@ module.exports = async (req, res) => {
                         }
                         let jsonVariable = await JSON.parse(body);
                         if (jsonVariable['data'].similarPercent >= 75) {
-                            matchedResult.push({ foundList: homelessList[i], faceSimlarity: jsonVariable['data'].similarPercent });
-
-
+                            matchedResult.push({ foundList: homelessList[i], faceSimilarPercent: jsonVariable['data'].similarPercent });
                         } else if (name == homelessList[i].name) {
-
-                            matchedResult.push({ foundList: homelessList[i], faceSimlarity: jsonVariable['data'].similarPercent });
-
-
+                            matchedResult.push({ foundList: homelessList[i], faceSimilarPercent: jsonVariable['data'].similarPercent });
                         }
                     });
                 }
-                res.json(matchedResult);
+                res.json({message:"search Done" , matchedResult});
             } else {
                 res.json({ message: "gender not fount woulf u like   continue to add", matchedResult })
             }
@@ -69,15 +64,9 @@ module.exports = async (req, res) => {
                 messageError: validationResultError.array(),
                 oldInputs: { name, startAge, endAge, gender } 
             })
-
         }
     } catch (error) {
         res.json({ message: "catch err", error })
     }
-
-
-
-
-
 
 }

@@ -4,12 +4,8 @@ const bcrypt = require('bcrypt')
 const fs = require('fs');
 const request = require("request-promise");
 const reportModel = require("../../model/report.model");
-const cros = require('cors');
-const app = require("../../routers/app.router");
-
-module.exports = async (req, res, next) => {
-
-    const file = req.file;
+module.exports = async (req, res) => {
+    const file =req.file;
     // console.log(file);
     let imageURl;
     if (!file) {
@@ -23,21 +19,19 @@ module.exports = async (req, res, next) => {
         const errorvalidationResult = validationResult(req);
         if (errorvalidationResult.isEmpty()) {
             // look  for match in Report table
-            const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge } })
+            const allUsers = await reportModel.find({ gender, age: { $gte: startAge, $lte: endAge }  , status:'active'}).populate(["policeStationID"])
             if (allUsers) {
                 for (let i = 0; i < allUsers.length; i++) {
-                    let options = {
-
+                    const options = {
+                        method: 'POST',
+                        origin:'*',
+                        url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
                         headers: {
                             'content-type': 'multipart/form-data; boundary=---011000010111000001101001',
                             'x-rapidapi-key': '5834cb2847msh2c96ebb8f6b326ap1276d5jsn4ff377f09c79',
                             'x-rapidapi-host': 'face-verification2.p.rapidapi.com',
-
                             useQueryString: true
                         },
-                        method: 'POST',
-                        url: 'https://face-verification2.p.rapidapi.com/FaceVerification',
-
                         formData: {
                             photo1: {
                                 value: fs.createReadStream(imageURl),
@@ -49,26 +43,25 @@ module.exports = async (req, res, next) => {
                             }
                         }
                     };
-                    await request(options, (error, response, body) => {
+                       await request(options ,  (error, response, body)=> {
+                            if (error) throw new Error(error);
+                            let jsonVariable = JSON.parse(body)
+                            if (jsonVariable['data'].similarPercent >= 75) {
+                                matchedResult.push({
+                                    foundList: allUsers[i],
+                                    faceSimilarPercent: jsonVariable['data'].similarPercent
+                                });
 
-                        if (error) throw new Error(error);
-                        let jsonVariable = JSON.parse(body)
-                        if (jsonVariable['data'].similarPercent >= 75) {
-                            matchedResult.push({
-                                foundList: allUsers[i],
-                                faceSimilarPercent: jsonVariable['data'].similarPercent
-                            });
-
-                        } else if (allUsers[i].name === name) {
-                            matchedResult.push({
-                                foundList: allUsers[i],
-                                faceSimilarPercent: jsonVariable['data'].similarPercent
-                            });
-                        }
-                    });
+                            } else if (allUsers[i].name === name) {
+                                matchedResult.push({
+                                    foundList: allUsers[i],
+                                    faceSimilarPercent: jsonVariable['data'].similarPercent
+                                });
+                            } 
+                        });
                 }
-                res.json({ message: "search Done", matchedResult });
-
+                    res.json({message:"search Done" ,matchedResult});
+               
             } else {
                 res.json({ message: "gender not fount woulf u like   continue to add", matchedResult })
             }

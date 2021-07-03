@@ -11,25 +11,29 @@ module.exports = async (req, res) => {
         } else {
             const user = await userModel.findOne({ email });
             if (user) {
-              if (user.aprove) {
-                if (user.confirmEmail == true) {
+                if (user.aprove) {
+                    if (user.confirmEmail == true) {
 
-                    const match = await bcrypt.compare(password, user.password);
-                    if (match) {
+                        const match = await bcrypt.compare(password, user.password);
+                        if (match) {
 
-                        var token = jwt.sign({ userRole:user.role ,userName: user.userName, userID: user._id, isLoggedIn: true }, 'shhhhh');
-                        res.json({ message: "loginSucess" , token });
+                            var token = jwt.sign({
+                                userRole: user.role, userName: user.userName,
+                                userID: user._id, isLoggedIn: true, imag: user.imageURl,
+                                location:user.location
+                            }, 'shhhhh');
+                            res.json({ message: "loginSucess", token });
+                        } else {
+                            res.json({ message: "invalid Password", oldIputs: req.body })
+
+                        }
                     } else {
-                        res.json({ message: "invalid Password", oldIputs: req.body })
-
+                        res.json({ message: "u have  to confirm u email First", oldIputs: req.body })
                     }
                 } else {
-                    res.json({ message: "u have  to confirm u email First", oldIputs: req.body })
+                    res.json({ message: "pinding for  admin Aprove", oldIputs: req.body })
+
                 }
-              } else {
-                res.json({ message: "pinding for  admin Aprove", oldIputs: req.body })
-                  
-              }
             } else {
                 res.json({ message: "not register user", oldIputs: req.body })
             }

@@ -28,7 +28,16 @@ module.exports = async (req, res) => {
                         // send Confirm mail
                         
                         const token = jwt.sign({ email }, 'shhhhh');
-                        let message=` <a href="http://localhost:3000/confirmMessage/${token}"> confirm </a>`;
+                        let message=`<section> 
+                        <div style="padding:  50px 100px;border-radius: 20px;background-color: white; text-align: center;">
+                            <div>
+                                <img src="https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/envelope-icon.png" width="100px" alt="">
+                                <h4>Email confirmation</h4>
+                                <p>Please enter this link to verify your email <a href=" http://localhost:3000/confirmMessage/${token}">click me</a></p>
+                            </div>
+                    </div>
+                </section> `;
+                   
                         await sendEmail(req.body.email,message)
                         res.json({ message: 'user  registerd successfully' });
                     }

@@ -8,7 +8,7 @@ module.exports =async (req, res) => {
         if (homeless) {
             if (homeless.status!="closed") {
                 
-            await homelessModel.updateOne({ _id: homeless._id }, { status: 'closed' });
+            await homelessModel.findByIdAndUpdate({ _id: homeless._id }, { status: 'closed' });
             res.json({ message: "homless closed successfully" });
             } else {
             res.json({ message: "homless  alrady closed " });

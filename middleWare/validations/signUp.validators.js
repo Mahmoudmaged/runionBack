@@ -3,7 +3,7 @@ const { body} = require('express-validator');
 module.exports =[
     body("userName").matches(/[A-Z][a-zA-Z][^#&<>\"~;$^%{}?]{1,20}$/),
     body("email").isEmail(),
-    body("phone").isMobilePhone(),
+    body("phone").matches(/^01[0125][0-9]{8}$/),
     body("location").contains('https://www.google.com/maps'),
     body("role").matches(/[a-zA-Z][^#&<>\"~;$^%{}?]{1,20}$/),
     body("password").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/),

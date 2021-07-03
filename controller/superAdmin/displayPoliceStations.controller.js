@@ -1,6 +1,4 @@
 const userModel = require("../../model/user.model")
-
-
 module.exports = async(req,res)=>{
     try {
         const policeStationList = await userModel.find({role:"policeStation"  , aprove:true});

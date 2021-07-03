@@ -4,12 +4,14 @@ const port = process.env.PORT || 3000;
 const path = require("path")
 const multer = require("multer");
 var cors = require('cors')
+app.use(cors())
 const mongoose = require('mongoose');
 app.use(express.urlencoded({ extends: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.static(path.join("uploadImages")))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors())
 
 app.get('/', (req, res) => {
     res.json({ message: "welcome  In Reunion System" });
@@ -54,7 +56,7 @@ app.post('/file',upolad.single("img"), (req, res) => {
     }
 });
 mongoose.connect('mongodb+srv://MahmoudElwan:01015776658@mahmoudelwan-nodejs.jfspq.mongodb.net/ReunionGP',
-    { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+    { useNewUrlParser: true, useUnifiedTopology: true , useFindAndModify:false }).then(() => {
         console.log("mongoDB is Connected");
     });
 app.listen(port, () => console.log(`Example app listening on port port!`))
