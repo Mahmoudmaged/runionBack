@@ -14,6 +14,9 @@ app.post('/signUp', signUpValidation, signUpController);
 // Start confirm Message 
 const confirmMail = require("../controller/signUp/confirmMail.controller");
 app.get('/confirmMessage/:token', confirmMail);
+//feedBack
+app.post("/feedBack", require("../middleWare/validations/feedBack.validators"),
+    require("../controller/email/feedBackMail.controller"))
 //end confirm Message
 /*================================= End  SignUp Controller ===================================== */
 
@@ -209,6 +212,9 @@ app.get('/displayPoliceStations',
     auth.authRole(["superAdmin"]),
     require("../controller/superAdmin/displayPoliceStations.controller"));
 
+app.get('/displayPoliceStationsGust',
+    require("../controller/superAdmin/displayPoliceStations.controller"));
+
 /*================================= End  SuperAdmin Controller ===================================== */
 /*================================= Start  schedule part ===================================== */
 var moment = require('moment');
@@ -229,8 +235,6 @@ async function chagngeRepot() {
 
 
 }
-
-
 async function faceCompare() {
     console.log("k");
     let homelessList = await homelessModel.find({ status: "undefined" }).populate('shelterID');
@@ -265,7 +269,7 @@ async function faceCompare() {
                 await request(options, async (error, response, body) => {
                     if (error) throw new Error(error);
                     let jsonVariable = JSON.parse(body)
-                    if (jsonVariable['data'].similarPercent >= 75 || allUsers[i].name === homelessList[i].name) {
+                    if (jsonVariable['data'].similarPercent >= 75 ) {
 
                         //commmunicate attach
                         console.log("matched" + homelessList[i]);
@@ -289,13 +293,10 @@ async function faceCompare() {
                             { status: "inCommunicate" });
                         await sendEmail(reportList[j].reporterEmail, message)
 
-
-
                     }
                 });
             }
         }
-
 
     }
 
